@@ -3,6 +3,8 @@ import ShowImg from '../ShowImg/ShowImg';
 import { useQuery } from '@tanstack/react-query';
 
 const Gallery = () => {
+
+    // fetch images data
     const{data: imgdata = [],isLoading: loading, refetch } = useQuery({
         queryKey: ['imgdata'],
         queryFn: async()=>{
@@ -10,6 +12,7 @@ const Gallery = () => {
             return res.json();
         }
     })
+    
 
     return (
         <div className='container mx-auto'>
