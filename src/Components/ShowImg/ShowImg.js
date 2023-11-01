@@ -5,7 +5,7 @@ const ShowImg = ({imgs}) => {
     return (
         <div>
             {/* data show by car element */}
-            <div className="card card-compact w-full ">
+            <div className="card card-compact shadow-xl w-full ">
                 <figure><img src={img} alt="images" /></figure>
             </div>
         </div>

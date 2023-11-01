@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import ShowImg from '../ShowImg/ShowImg';
+import { useQuery } from '@tanstack/react-query';
 
 const Gallery = () => {
-    const [imgdata, setImgdata] = useState([]);
-
-    // load all images from database
-    useEffect( ()=>{
-        fetch('http://localhost:5000/imgdata')
-            .then(res => res.json())
-            .then( data => {
-                setImgdata(data)
-                console.log(data)
-            });
-    } )
+    const{data: imgdata = [],isLoading: loading, refetch } = useQuery({
+        queryKey: ['imgdata'],
+        queryFn: async()=>{
+            const res = await fetch('http://localhost:5000/imgdata');
+            return res.json();
+        }
+    })
 
     return (
         <div className='container mx-auto'>
