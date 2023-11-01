@@ -15,9 +15,9 @@ const ShowImg = ({imgs}) => {
     }
 
     return (
-        <div>
+        <div className=''>
             {/* data show by car element */}
-            <div  className="card card-compact shadow-xl w-full relative group " >
+            <div  className="card card-compact  shadow-xl w-full relative group  hover:bg-blue-200 transition duration-300" >
                 <figure><img className='object-cover rounded-lg w-full h-full' src={img} alt="images" /></figure>
                 
                 {/* checkbox */}
@@ -32,10 +32,6 @@ const ShowImg = ({imgs}) => {
                     onChange={() => handleCheckboxChange(_id)}
                     />
                 </div>
-                
-
-                
-                
                 
             </div>
         </div>
