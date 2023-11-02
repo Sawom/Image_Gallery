@@ -46,7 +46,7 @@ const Gallery = () => {
                 .then(data =>{
                     if(data.data.insertedId){
                         refetch();
-                        reset();
+                        // reset();
                         // alert
                         Swal.fire({
                             position: 'top-end',
@@ -62,7 +62,23 @@ const Gallery = () => {
     }
     
     // images delete
-
+    const handleDeleteImages = () =>{
+        selectedImages.forEach(async(imageId)=>{
+            await axios.delete(`http://localhost:5000/imgdata/${imageId}`)
+            .then(res=>{
+                if(res.data.deletedCount > 0){
+                    refetch();
+                    // delete message alert
+                    Swal.fire(
+                            'Deleted!',
+                            'images have been deleted.',
+                            'success'
+                    )
+                    
+                }
+            })
+        })
+    }
 
     return (
         <div className='container mx-auto mb-10 '>
@@ -73,9 +89,9 @@ const Gallery = () => {
                     selectedImages.length > 0 ?
                     <>
                         <p className='text-xl font-bold navbar-start'> {selectedImages.length} Files Selected </p>
-                        <span className='navbar-end'><button className="btn btn-ghost text-red-600">Delete files</button></span>
+                        <span className='navbar-end'><button onClick={ ()=> handleDeleteImages()} className="btn btn-ghost text-red-600">Delete files</button></span>
                     </>
-                    : " "
+                    : ""
                 } 
             </div>
             <div className="divider"></div>
@@ -84,7 +100,7 @@ const Gallery = () => {
             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6'>
                 {
                     imgdata.map( (imgs) => (
-                        <div  className="card card-compact  shadow-xl w-full h-full relative group  hover:bg-blue-200 transition duration-300" >
+                        <div key={imgs._id} className="card card-compact  shadow-xl w-full h-full relative group  hover:bg-blue-200 transition duration-300" >
                             <figure><img className='object-cover rounded-lg w-full h-full' src={imgs.img} alt="images" /></figure>
                             {/* checkbox */}
                             <div
