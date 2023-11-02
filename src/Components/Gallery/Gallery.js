@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ShowImg from '../ShowImg/ShowImg';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
@@ -17,6 +16,17 @@ const Gallery = () => {
             return res.json();
         }
     })
+
+    // handle checkbox
+    const [selectedImages, setSelectedImages] = useState([]);
+
+    const handleCheckboxChange = (imageId) =>{
+        if(selectedImages.includes(imageId)){
+            setSelectedImages(selectedImages.filter((_id) => _id !== imageId ));
+        } else{
+            setSelectedImages([...selectedImages, imageId])
+        }
+    }
 
     // image upload function
     const onSubmit = data =>{
@@ -36,6 +46,7 @@ const Gallery = () => {
                 .then(data =>{
                     if(data.data.insertedId){
                         refetch();
+                        reset();
                         // alert
                         Swal.fire({
                             position: 'top-end',
@@ -50,17 +61,34 @@ const Gallery = () => {
         })
     }
     
+    // images delete
+
 
     return (
         <div className='container mx-auto mb-10 '>
             <p className='text-center mt-10 text-2xl font-semibold'> Images Gallery </p>
-             <div className="divider"></div>
+            <div className="divider"></div>
             <br />
             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6'>
                 {
-                    imgdata.map( (imgs) => <ShowImg 
-                        key={imgs._id} imgs={imgs}
-                    ></ShowImg> )
+                    imgdata.map( (imgs) => (
+                        <div  className="card card-compact  shadow-xl w-full h-full relative group  hover:bg-blue-200 transition duration-300" >
+                            <figure><img className='object-cover rounded-lg w-full h-full' src={imgs.img} alt="images" /></figure>
+                            {/* checkbox */}
+                            <div
+                                className={`absolute top-2 right-2 ${
+                                selectedImages.includes(imgs._id) ? "opacity-100" : "opacity-0"
+                                } group-hover:opacity-100`}>
+                                <input
+                                type="checkbox"
+                                className="w-5 h-5 checkbox border-2 border-black bg-white hover:bg-black  appearance-none"
+                                checked={selectedImages.includes(imgs._id)}
+                                onChange={() => handleCheckboxChange(imgs._id)}
+                                />
+                            </div>
+                
+                        </div>
+                    ) )
                 }
                 
                 {/* add image using react hook form */}
