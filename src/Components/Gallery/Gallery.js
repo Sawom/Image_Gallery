@@ -66,8 +66,20 @@ const Gallery = () => {
 
     return (
         <div className='container mx-auto mb-10 '>
-            <p className='text-center mt-10 text-2xl font-semibold'> Images Gallery </p>
+            
+            {/* condition to show selected images and delete button */}
+            <div className="navbar bg-base-100">
+                {
+                    selectedImages.length > 0 ?
+                    <>
+                        <p className='text-xl font-bold navbar-start'> {selectedImages.length} Files Selected </p>
+                        <span className='navbar-end'><button className="btn btn-ghost text-red-600">Delete files</button></span>
+                    </>
+                    : " "
+                } 
+            </div>
             <div className="divider"></div>
+                <p className='text-center mt-10 text-2xl font-semibold'> Image Gallery </p>
             <br />
             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6'>
                 {
