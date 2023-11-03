@@ -47,7 +47,7 @@ const Gallery = () => {
                     if(data.data.insertedId){
                         refetch();
                         // reset();
-                        // alert
+                        // alert image added
                         Swal.fire({
                             position: 'top-end',
                             icon: 'success',
@@ -74,7 +74,7 @@ const Gallery = () => {
                             'images have been deleted.',
                             'success'
                     )
-                    
+                    setSelectedImages([]);    
                 }
             })
         })
@@ -86,23 +86,28 @@ const Gallery = () => {
             {/* condition to show selected images and delete button */}
             <div className="navbar bg-base-100">
                 {
-                    selectedImages.length > 0 ?
+                    selectedImages.length === 0 ?
+                    <p className='text-xl font-bold navbar-start'> Gallery </p>
+                    
+                    :  
                     <>
                         <p className='text-xl font-bold navbar-start'> {selectedImages.length} Files Selected </p>
                         <span className='navbar-end'><button onClick={ ()=> handleDeleteImages()} className="btn btn-ghost text-red-600">Delete files</button></span>
                     </>
-                    : ""
-                } 
+                }
             </div>
+
+            {/* it is a divider that show an underline */}
             <div className="divider"></div>
-                <p className='text-center mt-10 text-2xl font-semibold'> Image Gallery </p>
             <br />
+
             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6'>
                 {
                     imgdata.map( (imgs) => (
-                        <div key={imgs._id} className="card card-compact  shadow-xl w-full h-full relative group  hover:bg-blue-200 transition duration-300" >
-                            <figure><img className='object-cover rounded-lg w-full h-full' src={imgs.img} alt="images" /></figure>
-                            {/* checkbox */}
+                        <div key={imgs._id} className="card card-compact  shadow-xl w-full h-full relative group  hover:bg-blue-200 transition duration-300" draggable>
+                            <figure><img className='object-cover rounded-lg w-full ' src={imgs.img} alt="images" /></figure>
+                            
+                            {/* checkbox handle */}
                             <div
                                 className={`absolute top-2 right-2 ${
                                 selectedImages.includes(imgs._id) ? "opacity-100" : "opacity-0"
@@ -130,7 +135,7 @@ const Gallery = () => {
                         <button  className="btn btn-ghost px-5 mt-2 text-white btn-outline  btn-active btn-sm md:btn-md lg:btn-md"  type="submit"> Add Image </button>
                     </div>
                 </form>
-                
+
             </div>
         </div>
     );
