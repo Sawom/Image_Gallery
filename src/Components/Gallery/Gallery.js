@@ -12,7 +12,7 @@ const Gallery = () => {
     const{data: imgdata = [],isLoading: loading, refetch } = useQuery({
         queryKey: ['imgdata'],
         queryFn: async()=>{
-            const res = await fetch('http://localhost:5000/imgdata');
+            const res = await fetch('https://imagegallerydb-production.up.railway.app/imgdata');
             return res.json();
         }
     })
@@ -59,7 +59,7 @@ const Gallery = () => {
             if(imgResponse.success){
                 const imgUrl = imgResponse.data.display_url;
                 const data = {img: imgUrl}
-                axios.post('http://localhost:5000/imgdata', data)
+                axios.post('https://imagegallerydb-production.up.railway.app/imgdata', data)
                 .then(data =>{
                     if(data.data.insertedId){
                         refetch();
@@ -82,7 +82,7 @@ const Gallery = () => {
     // images delete
     const handleDeleteImages = () =>{
         selectedImages.forEach(async(imageId)=>{
-            await axios.delete(`http://localhost:5000/imgdata/${imageId}`)
+            await axios.delete(`https://imagegallerydb-production.up.railway.app/imgdata/${imageId}`)
             .then(res=>{
                 if(res.data.deletedCount > 0){
                     refetch();
