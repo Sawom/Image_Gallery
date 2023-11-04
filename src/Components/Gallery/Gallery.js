@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
@@ -80,6 +80,10 @@ const Gallery = () => {
         })
     }
 
+    // drag and drop
+   
+
+
     return (
         <div className='container mx-auto mb-10 '>
             
@@ -101,10 +105,22 @@ const Gallery = () => {
             <div className="divider"></div>
             <br />
 
-            <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6'>
+            <div className='grid lg:grid-cols-5 md:grid-cols-3 grid-cols-1 gap-6'>
                 {
-                    imgdata.map( (imgs) => (
-                        <div key={imgs._id} className="card card-compact  shadow-xl w-full h-full relative group  hover:bg-blue-200 transition duration-300" draggable>
+                    imgdata.map( (imgs, index) => (
+                        <div key={imgs._id}  className={
+        "group shadow-xl  relative before:content-[''] before:absolute before:h-full before:w-full before:rounded-lg before:transition-colors before:cursor-move" +
+        (index === 0 ? " md:col-span-2 md:row-span-2" : " col-span-1") +
+        (imgdata.find((photo) => photo.id === imgs._id)
+          ? " opacity-100"
+          : " hover:before:bg-black/50")
+      } 
+
+    
+      
+      
+
+       >
                             <figure><img className='object-cover rounded-lg w-full ' src={imgs.img} alt="images" /></figure>
                             
                             {/* checkbox handle */}
@@ -137,8 +153,10 @@ const Gallery = () => {
                 </form>
 
             </div>
+
         </div>
     );
+
 };
 
 export default Gallery;
