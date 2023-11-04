@@ -8,7 +8,7 @@ const Gallery = () => {
     const { register, handleSubmit, reset } = useForm();
     const img_hosting_url = `https://api.imgbb.com/1/upload?key=87dfc5cdbb93451ca3d6aa8a9fc25647` ;
 
-    // fetch images data
+    // fetch images data by using react-query.
     const{data: imgdata = [],isLoading: loading, refetch } = useQuery({
         queryKey: ['imgdata'],
         queryFn: async()=>{
@@ -17,9 +17,23 @@ const Gallery = () => {
         }
     })
 
+    // drag and drop state
+    const [imgData, setImgData] = useState(imgdata);
+    const [draggedImage, setDraggedImage] = useState(null);
+
+    // here I use useEffect because of drag and drop.
+    // When I fetched data by imgdata and further change its position by drag and drop then image should be changed it's state.
+    // so that I put imgdata in useState and in useEffect i set imgdata in setImgData()
+    useEffect(() => {
+        setImgData(imgdata);
+    }, [imgdata]);
+
+    // console.log(imgData)
+
     // handle checkbox
     const [selectedImages, setSelectedImages] = useState([]);
 
+    // by this handleCheckboxChange function here I select images which will be deleted.
     const handleCheckboxChange = (imageId) =>{
         if(selectedImages.includes(imageId)){
             setSelectedImages(selectedImages.filter((_id) => _id !== imageId ));
@@ -28,7 +42,10 @@ const Gallery = () => {
         }
     }
 
-    // image upload function
+    // image upload function.
+    // to store images after uploading image here i use imgbb. imgbb is a image hosting website.
+    // Here I used POST operation twice times. 1st post operation is to store image in imgbb and imgbb return a url link of image.
+    // 2nd post operation is to store that link in database. Here I use mongodb as database.
     const onSubmit = data =>{
         const formData = new FormData();
         formData.append('image', data.img[0])
@@ -46,7 +63,7 @@ const Gallery = () => {
                 .then(data =>{
                     if(data.data.insertedId){
                         refetch();
-                        // reset();
+                        reset();
                         // alert image added
                         Swal.fire({
                             position: 'top-end',
@@ -55,6 +72,7 @@ const Gallery = () => {
                             showConfirmButton: false,
                             timer: 1500
                         })
+
                     }
                 })
             }
@@ -80,34 +98,33 @@ const Gallery = () => {
         })
     }
 
-    // drag and drop
-    const [imgData, setImgData] = useState(imgdata);
-    const [draggedImage, setDraggedImage] = useState(null);
-
-    useEffect(() => {
-        setImgData(imgdata);
-    }, [imgdata]);
-
-    console.log(imgData)
-
+    // This is the function that is handle the drag start event
+    // The index of the picture that is being dragged is what the handleDragStart function uses to set the draggedImage state. 
     const handleDragStart = (index) => {
-    setDraggedImage(index);
-  };
+        setDraggedImage(index);
+    };
 
-  // Create a function to handle the drag over event
-  const handleDragOver = (index) => {
-    if (draggedImage === null || index === draggedImage) return;
-    const updatedImages = [...imgData];
-    const [draggedItem] = updatedImages.splice(draggedImage, 1);
-    updatedImages.splice(index, 0, draggedItem);
-    setImgData(updatedImages);
-    setDraggedImage(index);
-  };
+    // This is the function that is handle the drag over event
+    // The function handleDragOver is in charge of rearranging the images' order when one is being dragged and positioned on top of another.
+    //  It looks to see if an image is being dragged and if the goal index differs from the dragged picture's present index.
+    //  If so, it modifies the image sequence to reflect the updated location.
+    const handleDragOver = (index) => {
+        if (draggedImage === null || index === draggedImage){ 
+            return
+        };
+        const updatedImages = [...imgData];
+        const [draggedItem] = updatedImages.splice(draggedImage, 1);
+        updatedImages.splice(index, 0, draggedItem);
+        setImgData(updatedImages);
+        setDraggedImage(index);
+    };
 
-  // Create a function to handle the drag end event
-  const handleDragEnd = () => {
-    setDraggedImage(null);
-  };
+    // This is the function that is handle the drag end event
+    // The draggedImage state can be reset to null by using the handleDragEnd method. 
+    // It indicates that there isn't an image being dragged at the moment when it is called after the drag-and-drop operation is finished. 
+    const handleDragEnd = () => {
+        setDraggedImage(null);
+    };
 
     return (
         <div className='container mx-auto mb-10 '>
@@ -134,18 +151,19 @@ const Gallery = () => {
                 {
                     imgData.map( (imgs, index) => (
                         <div key={imgs._id}  className={
-        "group shadow-xl  relative before:content-[''] before:absolute before:h-full before:w-full before:rounded-lg before:transition-colors before:cursor-move" +
-        (index === 0 ? " md:col-span-2 md:row-span-2" : " col-span-1") +
-        (imgData.find((photo) => photo.id === imgs._id)
-          ? " opacity-100"
-          : " hover:before:bg-black/50")
-      } 
+                        "group shadow-xl  relative before:content-[''] before:absolute before:h-full before:w-full before:rounded-lg before:transition-colors before:cursor-move" +
+                        (index === 0 ? " md:col-span-2 md:row-span-2" : " col-span-1") +
+                        (imgData.find((photo) => photo.id === imgs._id)
+                        ? " opacity-100"
+                        : " hover:before:bg-black/50")
+                        } 
 
-      onDragStart={() => handleDragStart(index)} 
-      onDragOver={() => handleDragOver(index)}  
-      onDragEnd={handleDragEnd} 
-      draggable={true}  
-       >
+                        // function called
+                        onDragStart={() => handleDragStart(index)} 
+                        onDragOver={() => handleDragOver(index)}  
+                        onDragEnd={handleDragEnd} 
+                        draggable={true}  
+                        >
                             <figure><img className='object-cover rounded-lg w-full ' src={imgs.img} alt="images" /></figure>
                             
                             {/* checkbox handle */}
